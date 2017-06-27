@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include <SPI.h>
 #include "TMC2130Stepper.h"
 #include "TMC2130Stepper_MACROS.h"
@@ -63,7 +64,7 @@ void TMC2130Stepper::send2130(uint8_t addressByte, uint32_t *config) {
 	SPI.beginTransaction(SPISettings(16000000/8, MSBFIRST, SPI_MODE3));
 	digitalWrite(_pinCS, LOW);
 
-	status_response = SPI.transfer(addressByte & 0xFF); // s = 
+	status_response = SPI.transfer(addressByte & 0xFF); // s =
 	#ifdef TMC2130DEBUG
 		Serial.println("## Received parameters:");
 		Serial.print("## Address byte: ");
@@ -221,13 +222,13 @@ uint32_t TMC2130Stepper::LOST_STEPS() { READ_REG_R(LOST_STEPS); }
  */
 
 
-/*	
+/*
 	Requested current = mA = I_rms/1000
 	Equation for current:
 	I_rms = (CS+1)/32 * V_fs/(R_sense+0.02ohm) * 1/sqrt(2)
 	Solve for CS ->
 	CS = 32*sqrt(2)*I_rms*(R_sense+0.02)/V_fs - 1
-	
+
 	Example:
 	vsense = 0b0 -> V_fs = 0.325V
 	mA = 1640mA = I_rms/1000 = 1.64A
@@ -235,7 +236,7 @@ uint32_t TMC2130Stepper::LOST_STEPS() { READ_REG_R(LOST_STEPS); }
 	->
 	CS = 32*sqrt(2)*1.64*(0.10+0.02)/0.325 - 1 = 26.4
 	CS = 26
-*/	
+*/
 void TMC2130Stepper::rms_current(uint16_t mA, float multiplier, float RS) {
 	Rsense = RS;
 	uint8_t CS = 32.0*1.41421*mA/1000.0*(Rsense+0.02)/0.325 - 1;
